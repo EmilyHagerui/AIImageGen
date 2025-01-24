@@ -7,6 +7,7 @@ A command-line tool for generating images using various AI APIs
 import argparse
 import sys
 from config import Config
+from generators import OpenAIGenerator, StabilityGenerator
 
 def create_parser():
     parser = argparse.ArgumentParser(description="AI Image Generation Tool")
@@ -21,6 +22,8 @@ def create_parser():
                        help='Show configuration settings')
     parser.add_argument('--set-api-key', nargs=2, metavar=('PROVIDER', 'KEY'),
                        help='Set API key for provider (openai, stability)')
+    parser.add_argument('--provider', choices=['openai', 'stability'], default='openai',
+                       help='AI provider to use (default: openai)')
     return parser
 
 def main():
@@ -59,7 +62,23 @@ def main():
     print(f"Output: {output_dir}")
     print(f"Size: {size}")
     print(f"Count: {count}")
-    print("Generation coming soon...")
+    print(f"Provider: {args.provider}")
+    
+    try:
+        if args.provider == 'openai':
+            api_key = config.get('api_keys.openai')
+            generator = OpenAIGenerator(api_key)
+        elif args.provider == 'stability':
+            api_key = config.get('api_keys.stability')
+            generator = StabilityGenerator(api_key)
+        
+        result = generator.generate(args.prompt, size, count, output_dir)
+        if result:
+            print("Generation completed successfully!")
+        
+    except ValueError as e:
+        print(f"Error: {e}")
+        print(f"Please set your API key with: python main.py --set-api-key {args.provider} YOUR_API_KEY")
 
 if __name__ == "__main__":
     main()
