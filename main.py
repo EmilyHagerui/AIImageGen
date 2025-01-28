@@ -72,9 +72,12 @@ def main():
             api_key = config.get('api_keys.stability')
             generator = StabilityGenerator(api_key)
         
-        result = generator.generate(args.prompt, size, count, output_dir)
-        if result:
+        generated_files = generator.generate(args.prompt, size, count, output_dir)
+        if generated_files:
             print("Generation completed successfully!")
+            print(f"Files saved to: {output_dir}")
+        else:
+            print("Generation failed or no files created")
         
     except ValueError as e:
         print(f"Error: {e}")

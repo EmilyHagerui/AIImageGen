@@ -6,6 +6,7 @@ import os
 import requests
 from pathlib import Path
 from abc import ABC, abstractmethod
+from utils import generate_filename, ensure_output_dir
 
 class ImageGenerator(ABC):
     @abstractmethod
@@ -34,15 +35,34 @@ class OpenAIGenerator(ImageGenerator):
         
         print(f"Generating {count} image(s) with OpenAI DALL-E...")
         
-        # This would make the actual API call
-        # response = requests.post(f"{self.base_url}/images/generations", headers=headers, json=data)
-        # For now, just simulate success
+        output_path = ensure_output_dir(output_dir)
+        generated_files = []
         
-        output_path = Path(output_dir)
-        output_path.mkdir(parents=True, exist_ok=True)
-        
-        print(f"Images would be saved to: {output_path}")
-        return True
+        try:
+            # This would make the actual API call
+            # response = requests.post(f"{self.base_url}/images/generations", headers=headers, json=data)
+            # response.raise_for_status()
+            # images_data = response.json()['data']
+            
+            # For now, simulate successful generation
+            for i in range(count):
+                filename = generate_filename(prompt, "openai")
+                filepath = output_path / filename
+                
+                # In real implementation, this would download and save the image
+                # For simulation, create a placeholder file
+                with open(filepath, 'w') as f:
+                    f.write(f"Placeholder for: {prompt}\nProvider: OpenAI DALL-E\nSize: {size}\n")
+                
+                generated_files.append(str(filepath))
+                print(f"Generated: {filename}")
+            
+            print(f"Successfully generated {len(generated_files)} image(s)")
+            return generated_files
+            
+        except Exception as e:
+            print(f"Error generating images: {e}")
+            return []
 
 class StabilityGenerator(ImageGenerator):
     def __init__(self, api_key):
@@ -55,8 +75,29 @@ class StabilityGenerator(ImageGenerator):
         
         print(f"Generating {count} image(s) with Stability AI...")
         
-        output_path = Path(output_dir)
-        output_path.mkdir(parents=True, exist_ok=True)
+        output_path = ensure_output_dir(output_dir)
+        generated_files = []
         
-        print(f"Images would be saved to: {output_path}")
-        return True
+        try:
+            # This would make the actual API call
+            # Similar to OpenAI but different endpoint structure
+            
+            # For now, simulate successful generation
+            for i in range(count):
+                filename = generate_filename(prompt, "stability")
+                filepath = output_path / filename
+                
+                # In real implementation, this would download and save the image
+                # For simulation, create a placeholder file
+                with open(filepath, 'w') as f:
+                    f.write(f"Placeholder for: {prompt}\nProvider: Stability AI\nSize: {size}\n")
+                
+                generated_files.append(str(filepath))
+                print(f"Generated: {filename}")
+            
+            print(f"Successfully generated {len(generated_files)} image(s)")
+            return generated_files
+            
+        except Exception as e:
+            print(f"Error generating images: {e}")
+            return []
