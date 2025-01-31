@@ -51,9 +51,46 @@ python main.py "cyberpunk city" --provider stability --count 3
 python main.py "abstract art" --output ./my_images --size 512x512
 ```
 
+## Batch Processing
+
+Generate multiple images from a configuration file:
+
+```bash
+# Create a sample batch file
+python main.py --create-batch my_batch.json
+
+# Process the batch file
+python main.py --batch my_batch.json --output ./batch_results
+```
+
+Sample batch file format:
+
+```json
+{
+  "jobs": [
+    {
+      "prompt": "a futuristic cityscape at sunset",
+      "provider": "openai",
+      "size": "1024x1024",
+      "count": 1,
+      "delay": 3
+    },
+    {
+      "prompt": "abstract geometric patterns",
+      "provider": "stability",
+      "size": "512x512",
+      "count": 2,
+      "delay": 2
+    }
+  ]
+}
+```
+
 ## Features
 
 - Multiple AI provider support (OpenAI DALL-E, Stability AI)
 - Configurable output directory and image parameters
 - Local configuration management
+- Batch processing for multiple prompts
+- Rate limiting and error handling
 - Command-line interface with helpful options

@@ -8,6 +8,7 @@ import argparse
 import sys
 from config import Config
 from generators import OpenAIGenerator, StabilityGenerator
+from batch import BatchProcessor
 
 def create_parser():
     parser = argparse.ArgumentParser(description="AI Image Generation Tool")
@@ -24,6 +25,10 @@ def create_parser():
                        help='Set API key for provider (openai, stability)')
     parser.add_argument('--provider', choices=['openai', 'stability'], default='openai',
                        help='AI provider to use (default: openai)')
+    parser.add_argument('--batch', metavar='FILE',
+                       help='Process batch file with multiple prompts')
+    parser.add_argument('--create-batch', metavar='FILE',
+                       help='Create sample batch configuration file')
     return parser
 
 def main():
@@ -38,6 +43,19 @@ def main():
             print(f"API key for {provider} has been saved.")
         else:
             print(f"Unknown provider: {provider}")
+        return
+    
+    if args.create_batch:
+        batch_processor = BatchProcessor(config)
+        batch_processor.create_sample_batch_file(args.create_batch)
+        return
+    
+    if args.batch:
+        output_dir = args.output or config.get('defaults.output_dir')
+        batch_processor = BatchProcessor(config)
+        success = batch_processor.process_batch_file(args.batch, output_dir)
+        if not success:
+            sys.exit(1)
         return
     
     if args.config:
